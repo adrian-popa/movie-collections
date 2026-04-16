@@ -1,0 +1,39 @@
+<div class="collections-page">
+  <div class="collections-header">
+    <h2>Your Collections</h2>
+    <button mat-raised-button color="primary" 
+      (click)="showModal = true">
+      + New Collection
+    </button>
+  </div>
+
+  @if (collections().length === 0) {
+    <div class="empty">
+      No collections yet. Create one to get started.
+    </div>
+  } @else {
+    <ul>
+      @for (collection of collections(); track collection.id) {
+        <li class="collection-card" (click)="navigate(collection.id)">
+          <span class="collection-name">
+            {{ collection.name }}
+          </span>
+          <span class="collection-meta">
+            {{ collection.movieIds.length }} 
+            {{ collection.movieIds.length === 1 ? 'movie' : 'movies' }}
+          </span>
+          <button mat-icon-button color="warn"
+            (click)="delete(collection.id, $event)"
+            aria-label="Delete collection">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </li>
+      }
+    </ul>
+  }
+
+  @if (showModal) {
+    <app-create-collection-modal 
+      (closed)="showModal = false" />
+  }
+</div>

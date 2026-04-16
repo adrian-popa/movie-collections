@@ -1,0 +1,49 @@
+@if (loading$ | async) {
+  <div class="spinner">Loading...</div>
+}
+@if (error$ | async; as error) {
+  <div class="error">{{ error }}</div>
+}
+<div class="grid">
+  @for (movie of movies$ | async; track movie.id) {
+    <mat-card class="movie-card">
+      <div class="poster-container">
+        @if (movie.poster_path) {
+          <img [src]="'https://image.tmdb.org/t/p/w200' + movie.poster_path" [alt]="movie.title" />
+        } @else {
+          <div class="poster-fallback">No Image</div>
+        }
+      </div>
+      <div class="movie-title">{{ movie.title }}</div>
+      <div class="movie-vote">
+        <mat-icon color="warn">star</mat-icon> {{ movie.vote_average }}
+      </div>
+      <mat-form-field appearance="fill" class="add-to-collection">
+        <mat-label>Add to collection</mat-label>
+        <mat-select
+          [disabled]="collections().length === 0"
+          [value]="getSelection(movie.id)"
+          (selectionChange)="onCollectionSelect(movie.id, $event.value)"
+        >
+          <mat-option value="" disabled>Select collection</mat-option>
+          @for (col of collections(); track col.id) {
+            <mat-option [value]="col.id">{{ col.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      @if (addedMovies.has(movie.id)) {
+        <div class="added-feedback">
+          <mat-icon style="color: green; font-size: 16px">
+            check_circle
+          </mat-icon> Added!
+        </div>
+      }
+    </mat-card>
+  }
+</div>
+
+<div class="show-more-container">
+  <button mat-raised-button color="primary" (click)="showMore()" [disabled]="currentPage() === totalPages()">
+    Show More
+  </button>
+</div>

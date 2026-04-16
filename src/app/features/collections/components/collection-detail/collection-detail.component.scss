@@ -1,0 +1,7 @@
+.collection-detail { max-width: 900px; margin: 2rem auto; padding: 1rem; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; margin-top: 2rem; }
+.movie-card { text-align: center; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 1rem; }
+.poster-fallback { width: 120px; height: 180px; background: #eee; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; border-radius: 4px; }
+.movie-title { font-weight: 500; margin: 0.5rem 0; }
+.subtitle { color: #888; margin-bottom: 1rem; }
+.empty { color: #888; margin: 2rem 0; text-align: center; }

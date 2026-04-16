@@ -1,0 +1,23 @@
+ul { list-style: none; padding: 0; }
+
+.collections-header { 
+	display: flex; 
+	align-items: center; 
+	justify-content: space-between; 
+	margin-bottom: 1.5rem; 
+}
+ul { list-style: none; padding: 0; }
+li { 
+	display: flex; 
+	align-items: center; 
+	gap: 1rem;
+	padding: 0.75rem 1rem; 
+	border-bottom: 1px solid #eee; 
+	cursor: pointer;
+	border-radius: 4px;
+	transition: background 0.15s;
+}
+li:hover { background: #f5f5f5; }
+.collection-name { flex: 1; font-weight: 500; }
+.collection-meta { color: #888; font-size: 0.9rem; }
+.empty { color: #888; margin: 2rem 0; text-align: center; }

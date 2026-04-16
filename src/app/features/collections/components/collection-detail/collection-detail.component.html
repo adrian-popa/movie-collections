@@ -1,0 +1,27 @@
+<div class="collection-detail">
+  <button mat-icon-button (click)="back()" aria-label="Back">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <h2>{{ collection()?.name }}</h2>
+  <div class="subtitle">
+    {{ movies().length }} 
+    {{ movies().length === 1 ? 'movie' : 'movies' }}
+  </div>
+  @if (movies().length === 0) {
+    <div class="empty">No movies in this collection yet</div>
+  } @else {
+    <div class="grid">
+      @for (movie of movies(); track movie.id) {
+        <div class="movie-card">
+          @if (movie.poster_path) {
+            <img [src]="'https://image.tmdb.org/t/p/w200' + movie.poster_path" [alt]="movie.title" />
+          } @else {
+            <div class="poster-fallback">No Image</div>
+          }
+          <div class="movie-title">{{ movie.title }}</div>
+          <button mat-button color="warn" (click)="removeMovie(movie.id)">Remove</button>
+        </div>
+      }
+    </div>
+  }
+</div>

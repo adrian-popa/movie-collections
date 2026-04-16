@@ -1,59 +1,141 @@
-# MovieCollections
+# Movie Collections App
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.7.
+## Overview
 
-## Development server
+This project is a small Angular application that allows users to browse
+movies and organize them into custom collections.
 
-To start a local development server, run:
+The application demonstrates a modern Angular architecture using
+**feature-based project structure** and **NgRx for state management**.\
+Collections are persisted locally using **browser localStorage** to
+preserve user data across sessions.
 
-```bash
-ng serve
-```
+The goal of this project is to showcase clean architecture, predictable
+state management, and maintainable code structure.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+------------------------------------------------------------------------
 
-## Code scaffolding
+## Tech Stack
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+-   Angular
+-   TypeScript
+-   NgRx (Store, Actions, Reducers, Selectors, Effects)
+-   Vitest (Unit Testing)
+-   Vite tooling
 
-```bash
-ng generate component component-name
-```
+------------------------------------------------------------------------
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Project Structure
 
-```bash
-ng generate --help
-```
+    src/
+      app/
+        core/
+          models/
+          services/
+        features/
+          movies/
+            components/
+            store/
+          collections/
+            components/
+            store/
+        shared/
+          components/
 
-## Building
+### Core
 
-To build the project run:
+Contains shared application-level resources such as models and services.
 
-```bash
-ng build
-```
+### Features
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Business domains are organized into independent feature folders.
 
-## Running unit tests
+-   **Movies** -- handles movie-related UI and state
+-   **Collections** -- manages user-defined movie collections
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+Each feature contains:
 
-```bash
-ng test
-```
+-   UI components
+-   NgRx store implementation
 
-## Running end-to-end tests
+### Shared
 
-For end-to-end (e2e) testing, run:
+Reusable UI components used across multiple features.
 
-```bash
-ng e2e
-```
+------------------------------------------------------------------------
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## State Management
 
-## Additional Resources
+The application uses **NgRx** for predictable state management.
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Each feature contains:
+
+-   **Actions** -- describe events that change state
+-   **Reducers** -- pure functions updating the state
+-   **Selectors** -- access slices of state
+-   **Effects** -- handle side effects such as persistence
+
+### Persistence
+
+User-created collections are persisted via **localStorage** using an
+NgRx Effect.
+
+This ensures:
+
+-   persistence across page reloads
+-   reducers remain pure
+-   UI logic stays separated from storage logic
+
+------------------------------------------------------------------------
+
+## Testing
+
+Unit tests are executed using **Vitest**.
+
+Vitest was chosen instead of Jasmine/Karma due to:
+
+-   faster execution
+-   simpler configuration
+-   modern tooling compatibility
+
+Tests focus on:
+
+-   reducers
+-   selectors
+-   component behavior
+-   store interactions
+
+------------------------------------------------------------------------
+
+## Running the Project
+
+Install dependencies:
+
+    npm install
+
+Run the development server:
+
+    npm run start
+
+Run tests:
+
+    npm run test
+
+Check coverage:
+
+    npm run coverage
+
+------------------------------------------------------------------------
+
+## Additional Documentation
+
+Additional design notes are available in:
+
+-   `ARCHITECTURE.md` -- architectural decisions and structure
+-   `AI_NOTES.md` -- explanation of AI tool usage during development
+
+------------------------------------------------------------------------
+
+## Author
+
+Adrian
