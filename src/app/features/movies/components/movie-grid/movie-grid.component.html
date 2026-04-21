@@ -1,11 +1,11 @@
-@if (loading$ | async) {
+@if (loading()) {
   <div class="spinner">Loading...</div>
 }
-@if (error$ | async; as error) {
+@if (error(); as error) {
   <div class="error">{{ error }}</div>
 }
 <div class="grid">
-  @for (movie of movies$ | async; track movie.id) {
+  @for (movie of movies(); track movie.id) {
     <mat-card class="movie-card">
       <div class="poster-container">
         @if (movie.poster_path) {

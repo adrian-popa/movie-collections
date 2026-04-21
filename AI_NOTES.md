@@ -1,149 +1,128 @@
-# AI Usage Notes
+# AI Collaboration Notes
 
-This document explains how AI tools were used during the implementation of this coding challenge.
+## [Entry 1] NgRx Actions Scaffold
 
-The project was completed using an **AI-assisted development workflow**, where AI tools were used as engineering assistants to accelerate development, while all architectural decisions, validation, and final implementations were performed by the developer.
+**Prompt:** Generate NgRx action files for movies and 
+collections features using createActionGroup with specific 
+events and props as described.
 
----
+**AI Output:** ~40 lines per file. Correct use of 
+createActionGroup and props<>(). However, no-props actions 
+used the deprecated `() => ({})` syntax instead of 
+`emptyProps()`.
 
-# AI Tools Used
+**My Changes:** Replaced `() => ({})` with `emptyProps()` 
+in both `movies.actions.ts` and `collections.actions.ts`. 
+Added missing `emptyProps` to imports.
 
-The following tools were used during development:
-
-- Claude (Sonnet 4.6)
-- GitHub Copilot (GPT-4.1)
-- AI-assisted IDE suggestions
-
-These tools were used to assist with coding, debugging, and documentation, similar to how engineers might use technical documentation, StackOverflow, or reference implementations.
-
----
-
-# Development Workflow
-
-The challenge was implemented using an **assisted coding approach**.
-
-This means that AI tools were used to:
-
-- propose possible code implementations
-- suggest refactoring improvements
-- identify potential bugs
-- help structure documentation
-- accelerate repetitive coding tasks
-
-All generated suggestions were:
-
-1. **reviewed manually**
-2. **validated for correctness**
-3. **tested locally**
-4. **rewritten or adjusted when necessary**
-
-No code was included without understanding its behavior.
+**Why:** `() => ({})` is the old NgRx syntax, removed in 
+NgRx 17+. Would have caused a runtime error. This is 
+exactly the kind of outdated pattern AI tools reproduce 
+from older training data that a senior developer must 
+catch.
 
 ---
 
-# AI-Assisted Areas
+## [Entry 2] Collections Effects — saveCollections$
 
-AI tools were used in several areas of the project:
+**Prompt:** Generate CollectionsEffects with a 
+loadCollections$ effect reading from localStorage and a 
+saveCollections$ effect writing to localStorage after 
+every mutation action.
 
-## Architecture & Project Structure
+**AI Output:** Correct overall structure. Used 
+`concatLatestFrom` from `@ngrx/operators` correctly. 
+However: (1) imported operators from `rxjs/operators` 
+instead of `rxjs` (deprecated path in RxJS 7+), (2) 
+used `[_, collections]` destructuring instead of 
+`[, collections]`, (3) no try/catch around 
+`localStorage.setItem`.
 
-AI assisted in exploring possible architectural approaches, including:
+**My Changes:** Fixed imports to `rxjs` directly. 
+Changed destructuring to `[, collections]`. Wrapped 
+localStorage write in try/catch to handle private 
+browsing and quota exceeded scenarios silently.
 
-- organizing the project using a **feature-based Angular structure**
-- structuring **NgRx state management**
-- separating concerns between `core`, `features`, and `shared` modules
-
-Final architectural decisions were reviewed and adjusted to ensure they follow common Angular best practices.
-
----
-
-## State Management Implementation
-
-AI suggestions were used when implementing parts of the NgRx setup, including:
-
-- actions
-- reducers
-- selectors
-- effects
-
-The developer reviewed each implementation to ensure it follows NgRx conventions and maintains predictable state flow.
-
----
-
-## Bug Fixing & Debugging
-
-AI tools were occasionally used as a debugging assistant when addressing issues such as:
-
-- TypeScript errors
-- test runner configuration
-- testing framework differences (Vitest vs Jasmine)
-- store interaction patterns
-
-Suggested solutions were verified and adapted before being applied.
+**Why:** RxJS 7 deprecated the `rxjs/operators` path. 
+localStorage can throw in private browsing mode — 
+a silent catch is appropriate here since persistence 
+is a convenience feature, not a critical one. The 
+unhandled error would have killed the effect stream.
 
 ---
 
-## Refactoring & Code Quality
+## [Entry 3] SearchBarComponent Debounce
 
-AI suggestions helped improve:
+**Prompt:** Fix SearchBarComponent to use a Subject with 
+debounceTime(300), distinctUntilChanged, and 
+takeUntilDestroyed() instead of dispatching on every 
+keystroke.
 
-- naming clarity
-- code readability
-- minor refactoring opportunities
-- reducing boilerplate in repetitive sections
+**AI Output:** Copilot ignored the requirement entirely 
+on first attempt and returned the original version with 
+double dispatch on every keystroke — no debounce, no 
+Subject, no cleanup.
 
-The final code was manually reviewed to maintain consistency.
+**My Changes:** Rewrote the component manually. Used a 
+`Subject<string>` piped through `debounceTime(300)`, 
+`distinctUntilChanged()`, and `takeUntilDestroyed()`. 
+Moved the subscription to the constructor to satisfy 
+the injection context requirement of 
+`takeUntilDestroyed()`. Added empty query guard to 
+dispatch `clearSearch` instead of `searchMovies`.
 
----
-
-## Documentation
-
-AI was used to help structure and refine documentation such as:
-
-- `README.md`
-- `ARCHITECTURE.md`
-- this document
-
-All documentation was reviewed and edited to accurately reflect the actual implementation.
-
----
-
-# Development Constraints
-
-This coding challenge was completed in **under approximately three hours**.
-
-AI-assisted development was intentionally used to:
-
-- reduce repetitive work
-- accelerate iteration
-- allow focus on architecture and correctness
-
-This reflects a **modern software engineering workflow**, where AI tools are used to improve productivity while maintaining human oversight and responsibility for the final result.
+**Why:** Dispatching on every keystroke means an API 
+call per character typed — unacceptable UX and wasteful 
+on the TMDB rate limit (40 req/10s). `takeUntilDestroyed` 
+is the Angular 21 idiomatic way to manage subscriptions, 
+replacing manual `ngOnDestroy` + `Subscription` cleanup. 
+The constructor placement is required — 
+`takeUntilDestroyed()` must be called in an injection 
+context.
 
 ---
 
-# Verification
+## [Entry 4] Cross-Slice Selector — selectMoviesByCollectionId
 
-The final implementation was validated by:
+**Prompt:** Generate selectors for collections feature 
+including a selector that returns full Movie objects for 
+a given collection.
 
-- manual code review
-- local testing
-- unit tests
-- verifying application behavior
+**AI Output:** Used the deprecated NgRx props pattern: 
+`createSelector(..., (state, props: { id: string }) => ...)`. 
+Also incorrectly annotated the state parameter type 
+manually as `ReturnType<typeof selectItems>`.
 
-All AI-assisted contributions were evaluated before being included in the final solution.
+**My Changes:** Rewrote both parameterised selectors as 
+selector factories — functions that take an `id: string` 
+and return a `createSelector(...)` call. Removed the 
+redundant manual type annotation since createSelector 
+infers types from input selectors.
+
+**Why:** The props-based selector API was deprecated in 
+NgRx 15 and removed in NgRx 17. The factory pattern is 
+the current standard and produces properly memoized, 
+type-safe selectors. The manual type annotation was 
+redundant noise that could cause type mismatches.
 
 ---
 
-# Summary
+## [Entry 5] Environment Configuration Pattern
 
-AI tools were used as **development accelerators**, not as autonomous code generators.
+**Prompt:** N/A — architectural decision made without AI.
 
-The developer remained responsible for:
+**AI Output:** N/A
 
-- architecture decisions
-- implementation validation
-- testing
-- final code quality
+**My Changes:** Created `environment.template.ts` as a 
+committed reference file with placeholder values. Added 
+real `environment.ts` to `.gitignore` pattern but 
+included it in this submission for reviewer convenience.
 
-This workflow reflects a realistic modern engineering process where AI tools assist developers but do not replace engineering judgment.
+**Why:** In production, secrets are injected via CI/CD 
+pipeline secret stores (GitHub Actions secrets, 
+AWS Secrets Manager etc.) and never committed to source 
+control. The template documents the expected shape and 
+setup steps for new developers. Deviating from the 
+gitignore pattern here is a deliberate, documented 
+trade-off for reviewer experience — not ignorance of 
+the practice.

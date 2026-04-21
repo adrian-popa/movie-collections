@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, output } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -18,7 +18,7 @@ import { CollectionsActions } from '../../store/collections.actions';
 export class CreateCollectionModalComponent {
   private store = inject(Store);
   name = '';
-  @Output() closed = new EventEmitter<void>();
+  closed = output<void>();
 
   create() {
     if (this.name) {

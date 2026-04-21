@@ -3,7 +3,6 @@ import { Store } from '@ngrx/store';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { AsyncPipe } from '@angular/common';
 import { selectCollectionById, selectMoviesByCollectionId } from '../../store/collections.selectors';
 import { CollectionsActions } from '../../store/collections.actions';
 
